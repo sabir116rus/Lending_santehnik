@@ -1,165 +1,206 @@
-import { useEffect, useRef, useState } from 'react'
-import { Phone, Clock, Shield, MessageCircle } from 'lucide-react'
+import {
+  ArrowRight,
+  Clock3,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react'
+
+const serviceMetrics = [
+  { value: '24/7', label: 'аварийный выезд без выходных' },
+  { value: '30 мин', label: 'среднее прибытие по Казани' },
+  { value: '2 года', label: 'гарантия на выполненные работы' },
+]
+
+const trustSignals = [
+  'Прозрачная оценка до начала работ',
+  'Сантехника, засоры, трубы и монтаж под ключ',
+  'Согласование стоимости до старта работ',
+]
 
 export default function Hero() {
-  const [isVisible, setIsVisible] = useState(false)
-  const heroRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setIsVisible(true)
-  }, [])
-
   return (
-    <section 
-      ref={heroRef}
-      className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"
-    >
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }} />
+    <section className="relative isolate overflow-hidden px-0 pb-20 pt-6 sm:pb-24 sm:pt-8 lg:pb-28">
+      <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,_rgba(214,188,139,0.22),_transparent_28%),radial-gradient(circle_at_82%_14%,_rgba(94,170,208,0.18),_transparent_22%),linear-gradient(180deg,_rgba(9,12,18,0.96),_rgba(7,10,15,0.92))]" />
+      <div className="absolute inset-0 -z-10 opacity-60">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover mix-blend-screen"
+        >
+          <source src="/plumbing-work.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,_rgba(7,10,15,0.94)_0%,_rgba(7,10,15,0.78)_46%,_rgba(7,10,15,0.30)_100%)]" />
       </div>
+      <div className="absolute left-6 top-28 hidden h-40 w-40 rounded-full border border-[#d7bc8b]/20 bg-[#d7bc8b]/10 blur-3xl lg:block" />
+      <div className="absolute bottom-10 right-6 hidden h-56 w-56 rounded-full border border-[#5eaad0]/20 bg-[#5eaad0]/10 blur-3xl lg:block" />
 
-      {/* Фоновое изображение */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/hero-bg.png)' }}
-      />
-      <div className="absolute inset-0 bg-slate-900/40" aria-hidden />
-
-      {/* Content overlay */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Header */}
-        <header className="w-full px-6 py-4 flex justify-between items-center backdrop-blur-sm bg-slate-900/30">
-          <div className="flex items-center gap-3">
-            {/* Logo from image */}
-            <img 
-              src="/logo.png" 
-              alt="Мастер сантехник 116" 
-              className="w-12 h-12 rounded-full object-cover border-2 border-cyan-500"
-            />
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-white">Мастер сантехник</span>
-              <span className="text-cyan-400 font-bold">116</span>
+      <div className="section-shell">
+        <header className="chrome-card flex flex-col gap-6 rounded-[28px] px-5 py-5 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative h-16 w-16 overflow-hidden rounded-[22px] border border-white/10 bg-[#0f141d] p-1">
+              <img
+                src="/logo.webp"
+                alt="Мастер сантехник 116"
+                className="h-full w-full rounded-[18px] object-cover"
+              />
+            </div>
+            <div>
+              <div className="display-title text-2xl font-semibold tracking-[0.08em] text-white">
+                Мастер сантехник 116
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
             <a
-              href="#contact"
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-full transition-all duration-300 shadow-lg shadow-cyan-500/25"
+              href="tel:+79600553409"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d7bc8b]/35 bg-[#d7bc8b] px-5 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#0a0d12] transition-transform duration-300 hover:-translate-y-0.5"
             >
-              Контакты
+              <Phone className="h-4 w-4" />
+              Срочный звонок
             </a>
             <a
               href="https://t.me/Sanya_506"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-full transition-all duration-300 shadow-lg shadow-cyan-500/25"
-              title="Написать в Telegram"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white/88 transition-colors duration-300 hover:border-[#5eaad0]/40 hover:bg-[#5eaad0]/10"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Telegram</span>
+              <MessageCircle className="h-4 w-4 text-[#5eaad0]" />
+              Telegram
             </a>
-            <a 
-              href="tel:+79600553409" 
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white rounded-full transition-all duration-300 shadow-lg shadow-cyan-500/25"
+            <a
+              href="https://max.ru/u/f9LHodD0cOJ8DZtpYRBi9wH0FYZO02cDSrUD1QzZvkDP6z4AHe7kr1-qccE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white/88 transition-colors duration-300 hover:border-[#d7bc8b]/40 hover:bg-[#d7bc8b]/10"
             >
-              <Phone className="w-4 h-4" />
-              <span className="hidden sm:inline">+79600553409</span>
+              <MessageCircle className="h-4 w-4 text-[#d7bc8b]" />
+              MAKC
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-semibold text-white/72 transition-colors duration-300 hover:border-white/20 hover:text-white"
+            >
+              Контакты
             </a>
           </div>
         </header>
 
-        {/* Main content */}
-        <div className="flex-1 flex items-center px-6 py-12">
-          <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text content */}
-            <div 
-              className={`space-y-8 transition-all duration-1000 ${
-                isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
-              }`}
-            >
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 border border-cyan-400/30 rounded-full">
-                  <Clock className="w-5 h-5 text-cyan-400" />
-                  <span className="text-cyan-300 text-base font-medium">Работаем 24/7 без выходных</span>
+        <div className="grid gap-10 pb-8 pt-10 lg:items-start lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:gap-14 lg:pb-12 lg:pt-16">
+          <div
+            className="translate-y-0 opacity-100 transition-all duration-1000"
+          >
+            <span className="eyebrow">аварийный и плановый выезд</span>
+
+            <div className="mt-8 max-w-4xl">
+              <h1 className="display-title text-[3.3rem] font-semibold leading-[0.92] text-white sm:text-[4rem] md:text-[4.5rem] lg:text-[4.2rem] xl:text-[6.2rem]">
+                Сервис
+                <span className="block text-white">сантехнического выезда</span>
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-8 text-white/72 sm:text-lg">
+                Устраняем аварии, монтируем сантехнику и приводим инженерные узлы в порядок
+                без хаоса, затяжек и спорной сметы. Выезд по Казани круглосуточно, с
+                согласованием стоимости до старта работ.
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <a
+                href="tel:+79600553409"
+                className="inline-flex items-center justify-center gap-3 rounded-full border border-[#d7bc8b]/35 bg-[#d7bc8b] px-7 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-[#090c10] transition-transform duration-300 hover:-translate-y-0.5"
+              >
+                <Phone className="h-5 w-5" />
+                Позвонить мастеру
+                <ArrowRight className="h-5 w-5" />
+              </a>
+              <a
+                href="#services"
+                className="inline-flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/5 px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white/80 transition-colors duration-300 hover:border-[#5eaad0]/30 hover:bg-[#5eaad0]/10"
+              >
+                Смотреть направления работ
+              </a>
+            </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {serviceMetrics.map((metric) => (
+                <div key={metric.label} className="metal-panel rounded-[24px] px-5 py-5">
+                  <div className="display-title text-3xl font-semibold text-white">{metric.value}</div>
+                  <div className="mt-2 text-sm leading-6 text-white/62">{metric.label}</div>
                 </div>
-                
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  Профессиональная{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-300">
-                    сантехника
-                  </span>{' '}
-                  на дому
-                </h1>
-                
-                <p className="text-lg text-slate-300 max-w-xl">
-                  Быстрый и качественный ремонт любой сложности. 
-                  Устранение засоров, замена труб, установка сантехники. 
-                  Гарантия на все работы до 2 лет.
-                </p>
+              ))}
+            </div>
+
+            <div className="mt-8 grid gap-3 text-sm text-white/70 sm:grid-cols-3">
+              {trustSignals.map((signal) => (
+                <div key={signal} className="glass-label justify-center sm:justify-start">
+                  <ShieldCheck className="h-4 w-4 text-[#d7bc8b]" />
+                  <span>{signal}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className="relative translate-y-0 opacity-100 transition-all delay-150 duration-1000 lg:-translate-y-8 lg:ml-auto lg:max-w-[440px]"
+          >
+            <div className="chrome-card tech-grid overflow-hidden rounded-[34px] p-6 sm:p-8">
+              <div className="flex items-center justify-between border-b border-white/10 pb-5">
+                <div>
+
+                  <div className="display-title mt-2 text-3xl font-semibold text-white">
+                    Экстренный выезд без лишних этапов
+                  </div>
+                </div>
+                <Sparkles className="h-7 w-7 text-[#5eaad0]" />
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50">
-                  <div className="text-2xl sm:text-3xl font-bold text-cyan-400">15+</div>
-                  <div className="text-xs sm:text-sm text-slate-400">лет опыта</div>
+              <div className="mt-6 space-y-4">
+                <div className="rounded-[26px] border border-white/8 bg-black/20 p-5">
+                  <div className="text-xs uppercase tracking-[0.28em] text-white/40">
+                    приоритетный контакт
+                  </div>
+                  <a
+                    href="tel:+79600553409"
+                    className="display-title mt-3 block text-[2rem] font-semibold leading-none text-white transition-colors hover:text-[#d7bc8b] sm:text-[2.6rem]"
+                  >
+                    +7 960 055-34-09
+                  </a>
+                  <p className="mt-3 max-w-sm text-sm leading-7 text-white/62">
+                    Звонок остается главным сценарием: так мастер быстрее оценит ситуацию и
+                    скажет, как подготовиться к его приезду.
+                  </p>
                 </div>
-                <div className="text-center p-4 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50">
-                  <div className="text-2xl sm:text-3xl font-bold text-cyan-400">5000+</div>
-                  <div className="text-xs sm:text-sm text-slate-400">клиентов</div>
-                </div>
-                <div className="text-center p-4 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50">
-                  <div className="text-2xl sm:text-3xl font-bold text-cyan-400">30 мин</div>
-                  <div className="text-xs sm:text-sm text-slate-400">прибытие</div>
-                </div>
-              </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <a 
-                  href="#contact"
-                  className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
-                >
-                  Вызвать мастера
-                </a>
-                <a 
-                  href="#services"
-                  className="px-8 py-4 bg-slate-700/50 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-600 transition-all duration-300 backdrop-blur-sm"
-                >
-                  Услуги и цены
-                </a>
-              </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                    <Clock3 className="h-5 w-5 text-[#d7bc8b]" />
+                    <div className="mt-4 text-sm uppercase tracking-[0.28em] text-white/42">
+                      режим работы
+                    </div>
+                    <div className="mt-2 text-lg font-semibold text-white">Круглосуточно</div>
+                    <p className="mt-2 text-sm leading-6 text-white/58">
+                      Работаем ночью, утром, в выходные и в праздничные дни.
+                    </p>
+                  </div>
 
-              {/* Trust badges */}
-              <div className="flex items-center gap-6 text-slate-400">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-cyan-400" />
-                  <span className="text-sm">Гарантия качества</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-cyan-400" />
-                  <span className="text-sm">Срочный выезд</span>
+                  <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                    <ShieldCheck className="h-5 w-5 text-[#5eaad0]" />
+                    <div className="mt-4 text-sm uppercase tracking-[0.28em] text-white/42">
+                      сервисный стандарт
+                    </div>
+                    <div className="mt-2 text-lg font-semibold text-white">Договор и гарантия</div>
+                    <p className="mt-2 text-sm leading-6 text-white/58">
+                      Объем работ, цена и результат фиксируются до закрытия заказа.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Right side - Empty for 3D visualization */}
-            <div className="hidden lg:block" />
           </div>
-        </div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path 
-              d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" 
-              fill="rgba(15, 23, 42, 0.8)"
-            />
-          </svg>
         </div>
       </div>
     </section>

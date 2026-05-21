@@ -8,7 +8,7 @@ import Footer from './sections/Footer'
 
 function App() {
   return (
-    <main className="min-h-screen bg-slate-900">
+    <main className="min-h-screen bg-[#080b11] text-white">
       <Hero />
       <Services />
       <Advantages />

@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Укажите ваш рабочий домен после деплоя
+Sitemap: https://sanya-santehnik116.ru/sitemap.xml

@@ -1,182 +1,177 @@
 import { useEffect, useRef, useState } from 'react'
-import { 
-  Wrench, 
-  Droplet, 
-  Flame, 
-  Bath, 
-  ShowerHead, 
+import {
+  Bath,
+  Droplet,
+  Flame,
   Grip,
-  CheckCircle2
+  ShowerHead,
+  Wrench,
 } from 'lucide-react'
 
-const services = [
+const featuredServices = [
   {
     icon: Droplet,
-    title: 'Устранение засоров',
-    description: 'Прочистка канализации любой сложности. Удаление засоров в раковинах, ваннах, унитазах и трубах.',
+    code: '01',
+    title: 'Аварийные засоры и протечки',
     price: 'от 1 500 ₽',
-    features: ['Механическая прочистка', 'Гидродинамическая очистка', 'Видеодиагностика'],
-    color: 'from-blue-500 to-cyan-500'
+    description:
+      'Быстрая локализация и устранение засоров в кухне, ванной, санузле и стояках. Устранение срочных бытовых аварий и проблем с отводом воды.',
+    highlights: ['Срочный выезд', 'Механическая и гидродинамическая прочистка', 'Работа с бытовыми и сложными засорами'],
   },
   {
     icon: Grip,
-    title: 'Замена труб',
-    description: 'Полная или частичная замена водопроводных и канализационных труб в квартире и частном доме.',
+    code: '02',
+    title: 'Трубы и инженерные линии',
     price: 'от 3 000 ₽',
-    features: ['Металлопластик', 'Полипропилен', 'Медные трубы'],
-    color: 'from-cyan-500 to-teal-500'
+    description:
+      'Частичная и полная замена труб, врезки, восстановление узлов и подготовка коммуникаций для санузлов, кухни и частного дома.',
+    highlights: ['Полипропилен, металлопластик, медь', 'Замена участков без лишнего шума', 'Согласование схемы до начала работ'],
   },
   {
     icon: Bath,
-    title: 'Установка сантехники',
-    description: 'Профессиональная установка ванн, раковин, унитазов, биде и другой сантехники.',
+    code: '03',
+    title: 'Монтаж сантехники под ключ',
     price: 'от 2 500 ₽',
-    features: ['Ванны и душевые', 'Раковины и мойки', 'Унитазы и биде'],
-    color: 'from-teal-500 to-emerald-500'
+    description:
+      'Установка ванн, раковин, унитазов, инсталляций и сопутствующей арматуры с аккуратной посадкой, герметизацией и проверкой узлов.',
+    highlights: ['Подключение и герметизация', 'Проверка на протечки', 'Финальная настройка и приемка'],
   },
-  {
-    icon: ShowerHead,
-    title: 'Душевая кабина',
-    description: 'Монтаж и подключение душевых кабин, поддонов, смесителей и душевых систем.',
-    price: 'от 1 700 ₽',
-    features: ['Сборка кабины', 'Подключение воды', 'Герметизация'],
-    color: 'from-emerald-500 to-green-500'
-  },
-  {
-    icon: Flame,
-    title: 'Водонагреватели',
-    description: 'Установка и замена бойлеров, проточных и накопительных водонагревателей.',
-    price: 'от 2 000 ₽',
-    features: ['Накопительные', 'Проточные', 'Газовые колонки'],
-    color: 'from-orange-500 to-red-500'
-  },
-  {
-    icon: Wrench,
-    title: 'Смесители',
-    description: 'Замена и ремонт смесителей всех типов. Установка кранов, диверторов и аксессуаров.',
-    price: 'от 800 ₽',
-    features: ['Кухонные', 'Ванные', 'Душевые'],
-    color: 'from-purple-500 to-pink-500'
-  }
+]
+
+const supportServices = [
+  { icon: ShowerHead, name: 'Душевые кабины', price: 'от 1 700 ₽' },
+  { icon: Flame, name: 'Водонагреватели', price: 'от 2 000 ₽' },
+  { icon: Wrench, name: 'Смесители и арматура', price: 'от 800 ₽' },
 ]
 
 export default function Services() {
-  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set())
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const index = cardRefs.current.indexOf(entry.target as HTMLDivElement)
-          if (entry.isIntersecting && index !== -1) {
-            setVisibleCards((prev) => new Set([...prev, index]))
-          }
-        })
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        }
       },
-      { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.18 }
     )
 
-    cardRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref)
-    })
+    const current = sectionRef.current
+    if (current) {
+      observer.observe(current)
+    }
 
     return () => observer.disconnect()
   }, [])
 
   return (
-    <section 
-      id="services" 
+    <section
+      id="services"
       ref={sectionRef}
-      className="relative py-24 bg-slate-900"
+      className="relative overflow-hidden py-24 sm:py-28"
     >
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
-      </div>
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,_rgba(8,11,17,0.82),_rgba(11,15,22,0.96))]" />
+      <div className="absolute left-0 top-24 -z-10 h-72 w-72 rounded-full bg-[#d7bc8b]/8 blur-3xl" />
+      <div className="absolute bottom-0 right-0 -z-10 h-72 w-72 rounded-full bg-[#5eaad0]/10 blur-3xl" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Section header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-sm font-medium mb-4">
-            Наши услуги
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Полный спектр{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-              сантехнических работ
-            </span>
-          </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Предоставляем профессиональные услуги по ремонту и установке сантехники любой сложности. Прозрачные цены на все виды работ.
-            Точную стоимость мастер определит после осмотра
-          </p>
+      <div className="section-shell">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+          <div className="max-w-xl">
+            <span className="eyebrow">направления работ</span>
+            <h2 className="section-title mt-7">
+              Инженерная витрина
+            </h2>
+
+            <div className="mt-8 rounded-[30px] border border-white/10 bg-white/[0.03] p-6">
+
+              <p className="mt-4 text-sm leading-7 text-white/68">
+                Цены указаны как стартовые ориентиры. Финальная стоимость подтверждается после
+                осмотра, когда мастер видит доступ к узлу, материалы и объем работ.
+              </p>
+              <a
+                href="tel:+79600553409"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:text-[#d7bc8b]"
+              >
+                Позвонить и уточнить стоимость
+              </a>
+            </div>
+          </div>
+
+          <div
+            className={`grid gap-5 transition-all duration-1000 lg:grid-cols-3 ${
+              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
+          >
+            {featuredServices.map((service, index) => {
+              const Icon = service.icon
+
+              return (
+                <article
+                  key={service.title}
+                  className="chrome-card flex h-full flex-col rounded-[30px] p-6"
+                  style={{ transitionDelay: `${index * 120}ms` }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-[20px] border border-white/10 bg-white/[0.04]">
+                      <Icon className="h-7 w-7 text-[#d7bc8b]" />
+                    </div>
+                    <span className="display-title text-sm tracking-[0.32em] text-white/28">
+                      {service.code}
+                    </span>
+                  </div>
+
+                  <div className="mt-6">
+                    <div className="text-xs uppercase tracking-[0.28em] text-white/40">
+                      старт работ
+                    </div>
+                    <div className="display-title mt-2 text-3xl font-semibold text-white">
+                      {service.price}
+                    </div>
+                  </div>
+
+                  <h3 className="mt-6 text-2xl font-semibold leading-tight text-white">
+                    {service.title}
+                  </h3>
+                  <p className="mt-4 flex-grow text-sm leading-7 text-white/66">
+                    {service.description}
+                  </p>
+
+                  <ul className="mt-6 space-y-3 border-t border-white/10 pt-5 text-sm text-white/76">
+                    {service.highlights.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#5eaad0]" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              )
+            })}
+          </div>
         </div>
 
-        {/* Services grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => {
+        <div className="mt-16 grid gap-4 rounded-[34px] border border-white/10 bg-white/[0.03] p-6 sm:grid-cols-3 sm:p-8">
+          {supportServices.map((service) => {
             const Icon = service.icon
-            const isVisible = visibleCards.has(index)
-            
+
             return (
               <div
-                key={index}
-                ref={(el) => { cardRefs.current[index] = el }}
-                className={`group relative flex flex-col p-6 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 hover:border-cyan-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-cyan-500/10 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
+                key={service.name}
+                className="flex items-center gap-4 rounded-[24px] border border-white/8 bg-[#0a0f16] px-5 py-5"
               >
-                {/* Icon */}
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="w-7 h-7 text-white" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white/[0.04]">
+                  <Icon className="h-6 w-6 text-[#5eaad0]" />
                 </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-slate-400 text-sm mb-4 leading-relaxed flex-grow">
-                  {service.description}
-                </p>
-
-                {/* Features */}
-                <ul className="space-y-2 mb-5">
-                  {service.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-center gap-2 text-sm text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-cyan-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Price — прижато к низу карточки для выравнивания по сетке */}
-                <div className="flex items-center pt-4 mt-auto border-t border-slate-700/50">
-                  <span className="text-2xl font-bold text-white">{service.price}</span>
+                <div>
+                  <div className="text-sm uppercase tracking-[0.22em] text-white/38">доп. работы</div>
+                  <div className="mt-1 text-base font-semibold text-white">{service.name}</div>
+                  <div className="mt-1 text-sm text-[#d7bc8b]">{service.price}</div>
                 </div>
-
-                {/* Hover glow */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
               </div>
             )
           })}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-slate-400 mb-6">
-            Не нашли нужную услугу? Свяжитесь с нами для консультации!
-          </p>
-          <a 
-            href="#contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/25"
-          >
-            <Wrench className="w-5 h-5" />
-            Получить консультацию
-          </a>
         </div>
       </div>
     </section>

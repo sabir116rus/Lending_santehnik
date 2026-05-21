@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowUpRight, Quote, Star } from 'lucide-react'
 
 const testimonials = [
   {
@@ -7,214 +7,132 @@ const testimonials = [
     role: 'Владелец квартиры',
     avatar: 'АП',
     rating: 5,
-    text: 'Вызывал мастера для устранения засора в кухонной раковине. Приехал через 20 минут, быстро нашёл причину и устранил проблему. Цена оказалась даже ниже, чем озвучивали по телефону. Рекомендую!',
-    service: 'Устранение засора'
+    text: 'Вызывал мастера для устранения засора в кухонной раковине. Приехал через 20 минут, быстро нашёл причину и устранил проблему. Цена оказалась даже ниже, чем озвучивали по телефону.',
+    service: 'Устранение засора',
+    highlight: 'Аварийный выезд вечером',
   },
   {
     name: 'Елена Смирнова',
-    role: 'Домохозяйка',
+    role: 'Владелица квартиры',
     avatar: 'ЕС',
     rating: 5,
-    text: 'Заменили старые трубы в ванной комнате. Работа выполнена качественно и аккуратно. Мастер был вежливым и профессиональным. Дали гарантию на 2 года. Очень довольна результатом!',
-    service: 'Замена труб'
+    text: 'Заменили старые трубы в ванной комнате. Работа выполнена качественно и аккуратно. Мастер был вежливым и профессиональным, объяснил каждое решение и дал гарантию на результат.',
+    service: 'Замена труб',
+    highlight: 'Аккуратный монтаж без хаоса',
   },
   {
     name: 'Михаил Иванов',
     role: 'Владелец частного дома',
     avatar: 'МИ',
     rating: 5,
-    text: 'Устанавливали новую душевую кабину. Мастера приехали вовремя, всё сделали быстро и качественно. Подключили все коммуникации, проверили работу. Спасибо за отличную работу!',
-    service: 'Установка душевой кабины'
+    text: 'Устанавливали новую душевую кабину. Мастера приехали вовремя, всё сделали быстро и профессионально. Подключили коммуникации, проверили узлы и дали рекомендации по эксплуатации.',
+    service: 'Душевая кабина',
+    highlight: 'Полный монтаж под ключ',
   },
-  {
-    name: 'Ольга Козлова',
-    role: 'Менеджер',
-    avatar: 'ОК',
-    rating: 5,
-    text: 'Срочно понадобилась помощь с протечкой в ванной. Позвонила в 11 вечера, мастер приехал через полчаса! Быстро нашёл причину и устранил течь. Цена адекватная, сервис отличный.',
-    service: 'Устранение протечки'
-  },
-  {
-    name: 'Дмитрий Соколов',
-    role: 'Инженер',
-    avatar: 'ДС',
-    rating: 5,
-    text: 'Заказывал установку водонагревателя. Мастер приехал с нужными материалами, всё сделал быстро и профессионально. Дал рекомендации по эксплуатации. Работой доволен на 100%!',
-    service: 'Установка водонагревателя'
-  }
 ]
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const sliderRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.2 }
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
+  const activeItem = testimonials[currentIndex]
 
   return (
-    <section 
-      ref={sectionRef}
-      className="relative py-24 bg-slate-800"
-    >
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-cyan-500/5 to-transparent" />
-      </div>
+    <section className="relative overflow-hidden py-24 sm:py-28">
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,_rgba(7,10,15,0.95),_rgba(11,16,23,0.94))]" />
+      <div className="absolute right-0 top-0 -z-10 h-full w-1/2 bg-[radial-gradient(circle_at_top_right,_rgba(94,170,208,0.14),_transparent_52%)]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Section header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-sm font-medium mb-4">
-            Отзывы
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Что говорят{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-              наши клиенты
-            </span>
-          </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Мы гордимся доверием наших клиентов и их положительными отзывами
-          </p>
-        </div>
+      <div className="section-shell">
+        <div className="grid gap-10 lg:grid-cols-[0.84fr_1.16fr] lg:items-start">
+          <div className="max-w-xl">
+            <span className="eyebrow">Отзывы клиентов</span>
+            <h2 className="section-title mt-7">
+              Отзывы,
+              <span className="block text-[#d7bc8b]">которым</span>
+              доверяют
+            </h2>
+            <p className="section-lead mt-6">
+              Мы показываем не просто оценки, а реальные ситуации: срочный выезд, аккуратный ремонт, понятная стоимость и результат, который решает проблему без лишнего стресса для клиента.
+            </p>
 
-        {/* Testimonials slider */}
-        <div 
-          ref={sliderRef}
-          className={`relative transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          {/* Main testimonial card */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="bg-slate-900/50 backdrop-blur-sm rounded-3xl p-8 md:p-12 border border-slate-700/50">
-              {/* Quote icon */}
-              <div className="absolute -top-6 left-8 w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center">
-                <Quote className="w-6 h-6 text-white" />
-              </div>
-
-              {/* Content */}
-              <div className="pt-4">
-                {/* Rating */}
-                <div className="flex gap-1 mb-6">
-                  {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-
-                {/* Text */}
-                <p className="text-lg md:text-xl text-slate-300 leading-relaxed mb-8">
-                  "{testimonials[currentIndex].text}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
-                      {testimonials[currentIndex].avatar}
-                    </div>
+            <div className="mt-8 space-y-3">
+              {testimonials.map((item, index) => (
+                <button
+                  key={item.name}
+                  type="button"
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-full rounded-[24px] border px-5 py-5 text-left transition-all duration-300 ${
+                    index === currentIndex
+                      ? 'border-[#d7bc8b]/35 bg-[#d7bc8b]/8'
+                      : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-4">
                     <div>
-                      <div className="text-white font-semibold">
-                        {testimonials[currentIndex].name}
+                      <div className="text-xs uppercase tracking-[0.28em] text-white/38">
+                        {item.service}
                       </div>
-                      <div className="text-slate-400 text-sm">
-                        {testimonials[currentIndex].role}
-                      </div>
+                      <div className="mt-2 text-lg font-semibold text-white">{item.highlight}</div>
                     </div>
+                    <ArrowUpRight
+                      className={`h-5 w-5 ${index === currentIndex ? 'text-[#d7bc8b]' : 'text-white/34'}`}
+                    />
                   </div>
-                  <div className="px-4 py-2 bg-cyan-500/10 rounded-full text-cyan-400 text-sm">
-                    {testimonials[currentIndex].service}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <button
-                onClick={prevSlide}
-                className="w-12 h-12 rounded-full bg-slate-700 hover:bg-cyan-500 flex items-center justify-center text-white transition-colors"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              
-              {/* Dots */}
-              <div className="flex gap-2">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentIndex 
-                        ? 'bg-cyan-500 w-8' 
-                        : 'bg-slate-600 hover:bg-slate-500'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <button
-                onClick={nextSlide}
-                className="w-12 h-12 rounded-full bg-slate-700 hover:bg-cyan-500 flex items-center justify-center text-white transition-colors"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Side cards preview */}
-          <div className="hidden lg:grid grid-cols-3 gap-6 mt-12">
-            {testimonials.slice(0, 3).map((testimonial, index) => (
-              <div
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`p-6 rounded-2xl border cursor-pointer transition-all duration-300 ${
-                  index === currentIndex
-                    ? 'bg-cyan-500/10 border-cyan-500/30'
-                    : 'bg-slate-900/30 border-slate-700/30 hover:border-slate-600'
-                }`}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white text-sm font-bold">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <div className="text-white text-sm font-medium">{testimonial.name}</div>
-                    <div className="flex gap-0.5">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                  </div>
+          <article className="chrome-card rounded-[34px] p-7 sm:p-10">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(135deg,_#d7bc8b,_#5eaad0)] text-xl font-bold text-[#081018]">
+                  {activeItem.avatar}
                 </div>
-                <p className="text-slate-400 text-sm line-clamp-2">{testimonial.text}</p>
+                <div>
+                  <div className="text-xl font-semibold text-white">{activeItem.name}</div>
+                  <div className="mt-1 text-sm text-white/55">{activeItem.role}</div>
+                </div>
               </div>
-            ))}
-          </div>
+
+              <div className="glass-label">
+                <Quote className="h-4 w-4 text-[#d7bc8b]" />
+                <span>{activeItem.service}</span>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-1">
+              {[...Array(activeItem.rating)].map((_, index) => (
+                <Star key={index} className="h-5 w-5 fill-[#d7bc8b] text-[#d7bc8b]" />
+              ))}
+            </div>
+
+            <blockquote className="display-title mt-6 text-2xl font-medium leading-[1.35] text-white sm:text-[2rem]">
+              “{activeItem.text}”
+            </blockquote>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                <div className="text-xs uppercase tracking-[0.26em] text-white/38">скорость</div>
+                <div className="mt-3 text-base font-semibold text-white">Приезд без ожидания</div>
+                <p className="mt-2 text-sm leading-6 text-white/60">
+                  Мастер оперативно выезжает и сразу приступает к диагностике и устранению проблемы.
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                <div className="text-xs uppercase tracking-[0.26em] text-white/38">качество</div>
+                <div className="mt-3 text-base font-semibold text-white">Аккуратная работа</div>
+                <p className="mt-2 text-sm leading-6 text-white/60">
+                  После ремонта остаётся порядок, а все соединения и узлы дополнительно проверяются.
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                <div className="text-xs uppercase tracking-[0.26em] text-white/38">доверие</div>
+                <div className="mt-3 text-base font-semibold text-white">Цена без сюрпризов</div>
+                <p className="mt-2 text-sm leading-6 text-white/60">
+                  Стоимость согласовывается заранее и не меняется после завершения работ.
+                </p>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>

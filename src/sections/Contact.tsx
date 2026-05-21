@@ -1,144 +1,248 @@
-import { useState, useEffect, useRef } from 'react'
-import { 
-  Phone, 
-  MapPin, 
-  Clock, 
+import { useState } from 'react'
+import {
+  CheckCircle2,
   Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
   Send,
-  CheckCircle,
-  MessageSquare
+  Loader2,
+  AlertCircle,
 } from 'lucide-react'
+
+const contactLines = [
+  {
+    icon: Phone,
+    title: 'Основной номер',
+    content: '+7 960 055-34-09',
+    hint: 'Круглосуточно для срочного вызова',
+    href: 'tel:+79600553409',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Telegram',
+    content: '@Sanya_506',
+    hint: 'Если удобнее написать, чем звонить',
+    href: 'https://t.me/Sanya_506',
+  },
+  {
+    icon: MessageCircle,
+    title: 'MAKC',
+    content: 'Связь через MAKC',
+    hint: 'Альтернативный способ связи',
+    href: 'https://max.ru/u/f9LHodD0cOJ8DZtpYRBi9wH0FYZO02cDSrUD1QzZvkDP6z4AHe7kr1-qccE',
+  },
+  {
+    icon: Mail,
+    title: 'Email',
+    content: 'sanya.bazuka95@mail.ru',
+    hint: 'Для вопросов и согласований',
+    href: 'mailto:sanya.bazuka95@mail.ru',
+  },
+  {
+    icon: MapPin,
+    title: 'Локация',
+    content: 'г. Казань, ул. Дубравная, дом 31',
+    hint: 'Выезд по городу и ближайшим районам',
+    href: '#contact',
+  },
+]
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     service: '',
-    message: ''
+    message: '',
   })
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulate form submission
-    setIsSubmitted(true)
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({ name: '', phone: '', service: '', message: '' })
-    }, 3000)
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
+
+    try {
+      // 1. Попытка отправить через безопасный серверный эндпоинт
+      const res = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (!res.ok) {
+        // 2. Фолбэк для локальной разработки: если серверный эндпоинт недоступен (например, при npm run dev без vercel dev)
+        const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN
+        const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID
+
+        if (import.meta.env.DEV && botToken && chatId) {
+          const text = `[DEV FALLBACK] Новая заявка с сайта!
+Имя: ${formData.name}
+Телефон: ${formData.phone}
+Услуга: ${formData.service}
+Комментарий: ${formData.message || '-'}`
+
+          const devRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text,
+            }),
+          })
+
+          if (!devRes.ok) throw new Error('Telegram API error')
+          
+          setSubmitStatus('success')
+          setTimeout(() => {
+            setSubmitStatus('idle')
+            setFormData({ name: '', phone: '', service: '', message: '' })
+          }, 3000)
+          return
+        }
+
+        // Если не в режиме разработки или нет ключей, выбрасываем ошибку
+        throw new Error('API request failed')
+      }
+
+      setSubmitStatus('success')
+      setTimeout(() => {
+        setSubmitStatus('idle')
+        setFormData({ name: '', phone: '', service: '', message: '' })
+      }, 3000)
+    } catch (error) {
+      console.error(error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }))
   }
 
-  const contactInfo = [
-    {
-      icon: Phone,
-      title: 'Телефон',
-      content: '+79600553409, +79370020520',
-      subContent: 'Круглосуточно',
-      href: 'tel:+79600553409'
-    },
-    {
-      icon: Mail,
-      title: 'Email',
-      content: 'sanya.bazuka95@mail.ru',
-      subContent: 'Для вопросов и предложений',
-      href: 'mailto:sanya.bazuka95@mail.ru'
-    },
-    {
-      icon: MapPin,
-      title: 'Адрес',
-      content: 'г. Казань ул. Дубравная дом 31',
-      subContent: 'Выезд по всему городу',
-      href: '#'
-    },
-    {
-      icon: Clock,
-      title: 'Режим работы',
-      content: '24 часа / 7 дней',
-      subContent: 'Без выходных и праздников',
-      href: '#'
-    }
-  ]
-
   return (
-    <section 
-      id="contact"
-      ref={sectionRef}
-      className="relative py-24 bg-gradient-to-b from-slate-800 to-slate-900"
-    >
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
-      </div>
+    <section id="contact" className="relative overflow-hidden py-24 sm:py-28">
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,_rgba(8,11,17,0.95),_rgba(8,11,17,1))]" />
+      <div className="absolute left-1/4 top-0 -z-10 h-64 w-64 rounded-full bg-[#d7bc8b]/10 blur-3xl" />
+      <div className="absolute bottom-0 right-0 -z-10 h-64 w-64 rounded-full bg-[#5eaad0]/12 blur-3xl" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Section header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-sm font-medium mb-4">
-            Контакты
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Свяжитесь{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-              с нами
-            </span>
-          </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Оставьте заявку или позвоните нам — мы готовы помочь вам прямо сейчас!
-          </p>
-        </div>
+      <div className="section-shell">
+        <div className="chrome-card overflow-hidden rounded-[36px]">
+          <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="relative border-b border-white/10 px-6 py-8 sm:px-8 sm:py-10 lg:border-b-0 lg:border-r">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(215,188,139,0.1),_transparent_34%)]" />
+              <div className="relative">
+                <span className="eyebrow">Контакты</span>
+                <h2 className="section-title mt-7">
+                  Лучше всего
+                  <span className="block text-[#d7bc8b]">решает звонок</span>
+                </h2>
+                <p className="section-lead mt-6 max-w-2xl">
+                  Для аварийной сантехники самый быстрый путь один: позвонить мастеру. Так мы
+                  сразу понимаем срочность, задаем нужные вопросы и предупреждаем о подготовке к
+                  выезду. Telegram и форма остаются как запасные сценарии.
+                </p>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact form */}
-          <div 
-            className={`transition-all duration-1000 ${
-              isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
-            }`}
-          >
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
-              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <MessageSquare className="w-6 h-6 text-cyan-400" />
-                Оставить заявку
-              </h3>
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <a
+                    href="tel:+79600553409"
+                    className="inline-flex items-center justify-center gap-3 rounded-full border border-[#d7bc8b]/35 bg-[#d7bc8b] px-7 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-[#091018] transition-transform duration-300 hover:-translate-y-0.5"
+                  >
+                    <Phone className="h-5 w-5" />
+                    Позвонить сейчас
+                  </a>
+                  <a
+                    href="https://t.me/Sanya_506"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.05] px-7 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white/82 transition-colors duration-300 hover:border-[#5eaad0]/35 hover:bg-[#5eaad0]/10"
+                  >
+                    <MessageCircle className="h-5 w-5 text-[#5eaad0]" />
+                    Написать в Telegram
+                  </a>
+                  <a
+                    href="https://max.ru/u/f9LHodD0cOJ8DZtpYRBi9wH0FYZO02cDSrUD1QzZvkDP6z4AHe7kr1-qccE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.05] px-7 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white/82 transition-colors duration-300 hover:border-[#d7bc8b]/35 hover:bg-[#d7bc8b]/10"
+                  >
+                    <MessageCircle className="h-5 w-5 text-[#d7bc8b]" />
+                    Написать в MAKC
+                  </a>
+                </div>
 
-              {isSubmitted ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle className="w-10 h-10 text-green-400" />
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  {contactLines.map((line) => {
+                    const Icon = line.icon
+
+                    return (
+                      <a
+                        key={line.title}
+                        href={line.href}
+                        target={line.href.startsWith('https') ? '_blank' : undefined}
+                        rel={line.href.startsWith('https') ? 'noopener noreferrer' : undefined}
+                        className="rounded-[26px] border border-white/10 bg-white/[0.04] p-5 transition-colors duration-300 hover:border-white/20"
+                      >
+                        <Icon className="h-6 w-6 text-[#d7bc8b]" />
+                        <div className="mt-4 text-xs uppercase tracking-[0.26em] text-white/38">
+                          {line.title}
+                        </div>
+                        <div className="mt-2 text-lg font-semibold text-white">{line.content}</div>
+                        <div className="mt-2 text-sm leading-6 text-white/60">{line.hint}</div>
+                      </a>
+                    )
+                  })}
+                </div>
+
+
+              </div>
+            </div>
+
+            <div className="bg-[linear-gradient(180deg,_rgba(255,255,255,0.03),_rgba(255,255,255,0.01))] px-6 py-8 sm:px-8 sm:py-10">
+
+              <h3 className="mt-4 text-3xl font-semibold text-white">Оставить заявку</h3>
+              <p className="mt-4 text-sm leading-7 text-white/60">
+                Заполните форму ниже, и мастер свяжется с вами для обсуждения деталей и согласования времени выезда.
+              </p>
+
+              {submitStatus === 'success' ? (
+                <div className="mt-8 rounded-[28px] border border-emerald-400/20 bg-emerald-500/10 p-8 text-center">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15">
+                    <CheckCircle2 className="h-8 w-8 text-emerald-300" />
                   </div>
-                  <h4 className="text-2xl font-bold text-white mb-2">Спасибо!</h4>
-                  <p className="text-slate-400">Мы свяжемся с вами в ближайшее время</p>
+                  <h4 className="mt-5 text-2xl font-semibold text-white">Заявка успешно отправлена!</h4>
+                  <p className="mt-3 text-sm leading-7 text-white/62">
+                    Спасибо за обращение. Мы свяжемся с вами в ближайшее время по указанному номеру телефона.
+                  </p>
+                </div>
+              ) : submitStatus === 'error' ? (
+                <div className="mt-8 rounded-[28px] border border-red-400/20 bg-red-500/10 p-8 text-center">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15">
+                    <AlertCircle className="h-8 w-8 text-red-300" />
+                  </div>
+                  <h4 className="mt-5 text-2xl font-semibold text-white">Ошибка отправки</h4>
+                  <p className="mt-3 text-sm leading-7 text-white/62">
+                    К сожалению, произошла ошибка. Пожалуйста, позвоните нам или напишите в Telegram.
+                  </p>
+                  <button
+                    onClick={() => setSubmitStatus('idle')}
+                    className="mt-6 text-sm font-medium text-white underline decoration-white/30 hover:decoration-white"
+                  >
+                    Попробовать снова
+                  </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                   <div>
-                    <label className="block text-slate-300 text-sm mb-2">Ваше имя</label>
+                    <label className="mb-2 block text-sm text-white/70">Ваше имя</label>
                     <input
                       type="text"
                       name="name"
@@ -146,12 +250,12 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="Иван Иванов"
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                      className="w-full rounded-[20px] border border-white/10 bg-[#0a0f16] px-4 py-3.5 text-white placeholder:text-white/28 focus:border-[#d7bc8b]/45 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 text-sm mb-2">Телефон</label>
+                    <label className="mb-2 block text-sm text-white/70">Телефон</label>
                     <input
                       type="tel"
                       name="phone"
@@ -159,99 +263,62 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="+7 (999) 999-99-99"
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                      className="w-full rounded-[20px] border border-white/10 bg-[#0a0f16] px-4 py-3.5 text-white placeholder:text-white/28 focus:border-[#d7bc8b]/45 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 text-sm mb-2">Услуга</label>
+                    <label className="mb-2 block text-sm text-white/70">Направление работ</label>
                     <select
                       name="service"
                       value={formData.service}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-cyan-500 transition-colors appearance-none cursor-pointer"
+                      className="w-full cursor-pointer rounded-[20px] border border-white/10 bg-[#0a0f16] px-4 py-3.5 text-white focus:border-[#d7bc8b]/45 focus:outline-none"
                     >
                       <option value="">Выберите услугу</option>
-                      <option value="clog">Устранение засора</option>
+                      <option value="clog">Аварийный засор</option>
                       <option value="pipes">Замена труб</option>
-                      <option value="install">Установка сантехники</option>
+                      <option value="install">Монтаж сантехники</option>
                       <option value="shower">Душевая кабина</option>
                       <option value="heater">Водонагреватель</option>
-                      <option value="faucet">Смеситель</option>
+                      <option value="faucet">Смеситель и арматура</option>
                       <option value="other">Другое</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 text-sm mb-2">Сообщение (необязательно)</label>
+                    <label className="mb-2 block text-sm text-white/70">Комментарий</label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       rows={4}
-                      placeholder="Опишите проблему..."
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors resize-none"
+                      placeholder="Коротко опишите ситуацию"
+                      className="w-full resize-none rounded-[20px] border border-white/10 bg-[#0a0f16] px-4 py-3.5 text-white placeholder:text-white/28 focus:border-[#d7bc8b]/45 focus:outline-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/10 bg-[#d7bc8b] px-6 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-[#091018] transition-all duration-300 hover:bg-[#c2a674] disabled:opacity-70"
                   >
-                    <Send className="w-5 h-5" />
-                    Отправить заявку
+                    {isSubmitting ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" />
+                        Отправить заявку
+                      </>
+                    )}
                   </button>
 
-                  <p className="text-slate-500 text-xs text-center">
-                    Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+                  <p className="mt-3 text-center text-xs text-white/35 leading-normal">
+                    Нажимая «Отправить заявку», вы соглашаетесь с обработкой персональных данных в соответствии с ФЗ РФ №152-ФЗ.
                   </p>
                 </form>
               )}
-            </div>
-          </div>
-
-          {/* Contact info */}
-          <div 
-            className={`space-y-6 transition-all duration-1000 delay-200 ${
-              isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
-            }`}
-          >
-            {contactInfo.map((info, index) => {
-              const Icon = info.icon
-              return (
-                <a
-                  key={index}
-                  href={info.href}
-                  className="group flex items-start gap-5 p-6 bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/30 hover:border-cyan-500/30 hover:bg-slate-800/50 transition-all duration-300"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-500/20 transition-colors">
-                    <Icon className="w-7 h-7 text-cyan-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-slate-400 text-sm mb-1">{info.title}</h4>
-                    <p className="text-white text-lg font-semibold group-hover:text-cyan-400 transition-colors">
-                      {info.content}
-                    </p>
-                    <p className="text-slate-500 text-sm">{info.subContent}</p>
-                  </div>
-                </a>
-              )
-            })}
-
-            {/* Quick call CTA */}
-            <div className="p-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl border border-cyan-500/30">
-              <h4 className="text-white font-semibold mb-2">Срочная помощь?</h4>
-              <p className="text-slate-300 text-sm mb-4">
-                Позвоните нам прямо сейчас — мастер выедет в течение 30 минут!
-              </p>
-              <a
-                href="tel:+79600553409"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-white font-semibold rounded-xl transition-colors"
-              >
-                <Phone className="w-5 h-5" />
-                Позвонить сейчас
-              </a>
             </div>
           </div>
         </div>
