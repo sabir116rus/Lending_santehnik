@@ -23,17 +23,18 @@ export default function Hero() {
   return (
     <section className="relative isolate overflow-hidden px-0 pb-20 pt-6 sm:pb-24 sm:pt-8 lg:pb-28">
       <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,_rgba(214,188,139,0.22),_transparent_28%),radial-gradient(circle_at_82%_14%,_rgba(94,170,208,0.18),_transparent_22%),linear-gradient(180deg,_rgba(9,12,18,0.96),_rgba(7,10,15,0.92))]" />
-      <div className="absolute inset-0 -z-10 opacity-60">
+      <div className="absolute inset-0 -z-10 opacity-90">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 h-full w-full object-cover mix-blend-screen"
+          preload="auto"
+          className="absolute left-0 top-[280px] h-[740px] w-full object-cover object-center mix-blend-screen [mask-image:linear-gradient(to_bottom,transparent,black_16%,black_84%,transparent)] sm:inset-0 sm:h-full sm:[mask-image:none]"
         >
           <source src="/plumbing-work.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,_rgba(7,10,15,0.94)_0%,_rgba(7,10,15,0.78)_46%,_rgba(7,10,15,0.30)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(7,10,15,0.70)_0%,_rgba(7,10,15,0.48)_56%,_rgba(7,10,15,0.72)_100%)] sm:bg-[linear-gradient(90deg,_rgba(7,10,15,0.90)_0%,_rgba(7,10,15,0.58)_46%,_rgba(7,10,15,0.24)_100%)]" />
       </div>
       <div className="absolute left-6 top-28 hidden h-40 w-40 rounded-full border border-[#d7bc8b]/20 bg-[#d7bc8b]/10 blur-3xl lg:block" />
       <div className="absolute bottom-10 right-6 hidden h-56 w-56 rounded-full border border-[#5eaad0]/20 bg-[#5eaad0]/10 blur-3xl lg:block" />
@@ -92,12 +93,12 @@ export default function Hero() {
 
         <div className="grid gap-10 pb-8 pt-10 lg:items-start lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:gap-14 lg:pb-12 lg:pt-16">
           <div
-            className="translate-y-0 opacity-100 transition-all duration-1000"
+            className="min-w-0 translate-y-0 opacity-100 transition-all duration-1000"
           >
             <span className="eyebrow">аварийный и плановый выезд</span>
 
             <div className="mt-8 max-w-4xl">
-              <h1 className="display-title text-[3.3rem] font-semibold leading-[0.92] text-white sm:text-[4rem] md:text-[4.5rem] lg:text-[4.2rem] xl:text-[6.2rem]">
+              <h1 className="display-title text-[clamp(1.75rem,8.5vw,2.1rem)] font-semibold leading-[0.98] text-white sm:text-[3.4rem] md:text-[4.3rem] lg:text-[3.4rem] xl:text-[4.35rem]">
                 Сервис
                 <span className="block text-white">сантехнического выезда</span>
               </h1>

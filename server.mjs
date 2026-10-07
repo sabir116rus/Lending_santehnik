@@ -72,7 +72,9 @@ async function serveStatic(req, res) {
 
   const ext = path.extname(filePath).toLowerCase()
   res.setHeader('Content-Type', mime[ext] || 'application/octet-stream')
-  if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+  if (ext === '.html') {
+    res.setHeader('Cache-Control', 'no-store')
+  } else if (filePath.includes(`${path.sep}assets${path.sep}`)) {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
   } else {
     res.setHeader('Cache-Control', 'public, max-age=300')
